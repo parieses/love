@@ -14,6 +14,11 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'enableCookieValidation' => false,
+            'parsers' => [
+                'application/json' => JsonParser::class,
+                'text/json' => JsonParser::class,
+            ]
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -36,14 +41,6 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-            ],
-        ],
-        */
     ],
     'params' => $params,
 ];
