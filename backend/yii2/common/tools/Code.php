@@ -11,7 +11,7 @@ class Code
     private const NOTICE_CODE = 2;    //警示码
     private const SOURCE_CODE = 3;    //来源错误码
     private const ACCESS_CODE = 4;    //权限错误码
-    private const TOKEN_CODE = 5;     //token错误码
+    private const TOKEN_CODE = 5 ;     //非法
     private const IP_CODE = 6;
     Private const NO_FIND_CODE = 404;
 

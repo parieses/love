@@ -11,6 +11,7 @@ trait BaseAction
 
     public function actions()
     {
+        $this->enableCsrfValidation = false;
         $this->start  = Common::getMillisecond();
         $actions = parent::actions();
         // 禁用 "delete" 和 "create" 动作

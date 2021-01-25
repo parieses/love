@@ -3,20 +3,20 @@
 namespace common\models\base;
 
 /**
- * This is the ActiveQuery class for [[Admin]].
+ * This is the ActiveQuery class for [[User]].
  *
- * @see Admin
+ * @see User
  */
-class AdminQuery extends \yii\db\ActiveQuery
+class UserQuery extends \yii\db\ActiveQuery
 {
-    public function active()
+    /*public function active()
     {
         return $this->andWhere('[[status]]=1');
-    }
+    }*/
 
     /**
      * @inheritdoc
-     * @return Admin[]|array
+     * @return User[]|array
      */
     public function all($db = null)
     {
@@ -25,14 +25,10 @@ class AdminQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return Admin|array|null
+     * @return User|array|null
      */
     public function one($db = null)
     {
         return parent::one($db);
-    }
-    public function getArrayOne()
-    {
-        return $this->asArray()->one();
     }
 }

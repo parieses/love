@@ -1,4 +1,7 @@
 <?php
+
+use frontend\models\User;
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -7,7 +10,7 @@ $params = array_merge(
 );
 
 return [
-    'id' => 'app-frontend',
+    'id' => 'love-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
@@ -21,7 +24,7 @@ return [
             ]
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
+            'identityClass' => User::class,
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
         ],

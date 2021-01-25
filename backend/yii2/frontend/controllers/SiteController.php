@@ -2,12 +2,18 @@
 
 namespace frontend\controllers;
 
+use common\tools\Code;
+use frontend\models\RegisterForm;
+use frontend\models\User;
+use common\models\form\LoginForm;
+use common\tools\Tool;
 use common\traits\BaseAction;
 use yii\web\Controller;
 
 
 /**
- * Site controller
+ * Class SiteController
+ * @package frontend\controllers
  */
 class SiteController extends Controller
 {
@@ -15,16 +21,54 @@ class SiteController extends Controller
 
 
     /**
-     * Logs in a user.
-     *
-     * @return mixed
+     * 登陆
+     * Created by Mr.亮先生.
+     * program: love
+     * FuncName:actionLogin
+     * status:
+     * User: Mr.liang
+     * Date: 2021/1/25
+     * Time: 15:04
+     * Email:1695699447@qq.com
+     * @return array
      */
-    public function actionLogin()
+    public function actionLogin(): array
     {
-        $a = 0;
-        for ($i = 0; $i < 10000000000; $i++) {
-            $a += $i;
+        $model = new LoginForm();
+        $model->setScenario('user');
+        $model->load(Tool::getRequestData(), '');
+        if ($model->validate()) {
+            return Tool::success('登陆成功', $model->getAccessToken());
         }
-        return $a;
+        $msg = Tool::getFirstErrorMessage($model->firstErrors);
+        return Tool::notice($msg);
+    }
+
+    /**
+     * 注册
+     * Created by Mr.亮先生.
+     * program: love
+     * FuncName:actionRegister
+     * status:
+     * User: Mr.liang
+     * Date: 2021/1/25
+     * Time: 15:04
+     * Email:1695699447@qq.com
+     * @return array
+     */
+    public function actionRegister(): array
+    {
+        $model = new RegisterForm();
+        $model->load(Tool::getRequestData(), '');
+        if ($model->validate()) {
+            return $model->save();
+        }
+        $msg = Tool::getFirstErrorMessage($model->firstErrors);
+        return Tool::notice($msg);
+    }
+
+    public function actionError(): array
+    {
+        return ['code' => Code::getNoFindCode(), 'message' => '该页面没找到'];
     }
 }

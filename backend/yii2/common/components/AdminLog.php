@@ -1,7 +1,7 @@
 <?php
 
 
-namespace baseController\components;
+namespace common\components;
 
 
 use common\models\base\OperationLog;

@@ -31,8 +31,8 @@ class m210122_060501_operation_log extends Migration
                 'table'=> $this->string(50)->notNull()->defaultValue('')->comment('操作表名称'),
                 'type'=> $this->tinyInteger(1)->notNull()->defaultValue(0)->comment('类型0:INSERT;1:UPDATE;2:DELETE'),
                 'source'=> $this->string(11)->null()->defaultValue('')->comment('设备来源'),
-                'app_id'=> $this->string(11)->null()->defaultValue('')->comment('应用id'),
-                'alter_id'=> $this->integer(11)->unsigned()->null()->defaultValue(0)->comment('修改相关数据的id'),
+                'app_id'=> $this->string(20)->null()->defaultValue('')->comment('应用id'),
+                'alter_id'=> $this->integer(20)->unsigned()->null()->defaultValue(0)->comment('修改相关数据的id'),
                 'merchant_id'=> $this->integer(11)->unsigned()->null()->defaultValue(0)->comment('商户id'),
             ],$tableOptions
         );

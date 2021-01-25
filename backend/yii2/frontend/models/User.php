@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\models;
+namespace frontend\models;
 
 
 use common\enums\StatusEnum;
@@ -9,7 +9,7 @@ use Yii;
 use yii\web\IdentityInterface;
 
 
-class Admin extends \common\models\base\Admin implements IdentityInterface
+class User extends \common\models\base\User implements IdentityInterface
 {
 
     /**
@@ -57,9 +57,9 @@ class Admin extends \common\models\base\Admin implements IdentityInterface
         return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
 
-    public static function findByUserName($username)
+    public static function findByMobile($username)
     {
-        return self::findOne(['username' => $username, 'status' => StatusEnum::ENABLED]);
+        return self::findOne(['mobile' => $username, 'status' => StatusEnum::ENABLED]);
     }
 
     public static function isAccessTokenValid($token = null): bool

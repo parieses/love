@@ -68,24 +68,6 @@ class Common
         return $data;
     }
 
-    /**
-     * Created by Mr.亮先生.
-     * program: love
-     * FuncName:generateAccessToken
-     * status:static
-     * User: Mr.liang
-     * Date: 2021/1/22
-     * Time: 10:13
-     * Email:1695699447@qq.com
-     * @param $id
-     * @param $timestamp
-     * @return string
-     * @throws Exception
-     */
-    public static function generateAccessToken($id, $timestamp): string
-    {
-        return Yii::$app->security->generateRandomString() . ':&:' . $timestamp . ':&:' . $id;
-    }
 
     /**
      * Created by Mr.亮先生.
@@ -102,5 +84,16 @@ class Common
     {
         [$s1, $s2] = explode(' ', microtime());
         return (float)sprintf('%.0f', ((float)$s1 + (float)$s2) * 1000);
+    }
+
+    //生成token
+    public static function generateAccessToken($info, $redisKey): string
+    {
+        $timestamp = (time() + self::TOKEN_EXPIRE);
+        $redisKey .= $info->id;
+        $token =  Yii::$app->security->generateRandomString() . ':&:' . $timestamp . ':&:' . $info->id;
+        Yii::$app->redis->set($redisKey,$token );
+        Yii::$app->redis->expireat($redisKey, $timestamp);
+        return base64_encode($token);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace common\tools;
 
+use common\helpers\ArrayHelper;
 use Exception;
 use Yii;
 
@@ -245,5 +246,15 @@ class Tool
             $year_diff--;
         }
         return $year_diff;
+    }
+
+    public static function getRequestData($name = null, $defaultValue = null)
+    {
+        $request = Yii::$app->request;
+        $data = array_merge($request->getBodyParams(), $request->getQueryParams());
+        if (!is_null($name)) {
+            return isset($data[$name]) && $data[$name] != '' ? $data[$name] : $defaultValue;
+        }
+        return $data;
     }
 }

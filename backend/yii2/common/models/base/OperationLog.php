@@ -44,7 +44,7 @@ class OperationLog extends \yii\db\ActiveRecord
             [['method', 'type'], 'string', 'max' => 1],
             [['module', 'controller', 'action', 'table'], 'string', 'max' => 50],
             [['ip'], 'string', 'max' => 16],
-            [['source', 'app_id'], 'string', 'max' => 11],
+            [['source', 'app_id'], 'string', 'max' => 20],
         ];
     }
 

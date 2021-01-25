@@ -1,4 +1,7 @@
 <?php
+
+use backend\models\Admin;
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -7,17 +10,21 @@ $params = array_merge(
 );
 
 return [
-    'id' => 'app-backend',
+    'id' => 'love-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
     'modules' => [],
     'components' => [
         'request' => [
-            'csrfParam' => '_csrf-backend',
+            'enableCookieValidation' => false,
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+                'text/json' => 'yii\web\JsonParser',
+            ]
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
+            'identityClass' => Admin::class,
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
         ],
