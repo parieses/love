@@ -46,17 +46,15 @@ class User extends \yii\db\ActiveRecord
     {
         return [
             [['birthday'], 'safe'],
-            [['province_id', 'city_id', 'area_id', 'visit_count', 'last_time', 'created_at', 'updated_at'], 'integer'],
+            [['province_id', 'city_id', 'area_id', 'visit_count', 'last_time', 'created_at', 'updated_at','gender','status'], 'integer'],
             [['password_hash'], 'string', 'max' => 150],
             [['realname', 'nickname'], 'string', 'max' => 10],
             [['head_portrait'], 'string', 'max' => 255],
-            [['gender'], 'string', 'max' => 3],
             [['qq', 'home_phone'], 'string', 'max' => 20],
             [['email'], 'string', 'max' => 60],
             [['address'], 'string', 'max' => 100],
             [['mobile'], 'string', 'max' => 11],
             [['last_ip'], 'string', 'max' => 16],
-            [['status'], 'string', 'max' => 4],
         ];
     }
 

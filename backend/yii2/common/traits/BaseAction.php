@@ -2,6 +2,7 @@
 namespace common\traits;
 use common\tools\Code;
 use common\tools\Common;
+use common\tools\Tool;
 use Yii;
 use yii\web\Response;
 
@@ -9,16 +10,10 @@ trait BaseAction
 {
     public  $start = 0;
 
-    public function actions()
+    public function init()
     {
         $this->enableCsrfValidation = false;
         $this->start  = Common::getMillisecond();
-        $actions = parent::actions();
-        // 禁用 "delete" 和 "create" 动作
-        unset($actions['delete'], $actions['create']);
-        // 使用 "prepareDataProvider()" 方法自定义数据 provider
-        $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
-        return $actions;
     }
 
     public function beforeAction($action)
@@ -32,23 +27,31 @@ trait BaseAction
             function ($event) {
                 $response = $event->sender;
                 $response->format = Response::FORMAT_JSON;
-                if (!isset($response->data['code'])) {
-                    $message = '获取成功';
-                    if (isset($response->data['message'])) {
-                        $message = $response->data['message'];
-                    } elseif (!$response->isSuccessful && isset($response->data[0]['message'])) {
-                        $message = $response->data[0]['message'];
+                if ($response->statusCode !== 500){
+                    if (!isset($response->data['code'])) {
+                        $message = '获取成功';
+                        if (isset($response->data['message'])) {
+                            $message = $response->data['message'];
+                        } elseif (!$response->isSuccessful && isset($response->data[0]['message'])) {
+                            $message = $response->data[0]['message'];
+                        }
+                        $response->data = [
+                            'message' => $message,
+                            'code' => $response->isSuccessful ? $response->data['code'] ?? Code::getSuccessCode() : Code::getErrorCode(),
+                            'data' => $response->data ?: [],
+                            'duration' => Common::getMillisecond() - $this->start
+                        ];
+                    }else{
+                        $response->data['duration'] = Common::getMillisecond() - $this->start;
                     }
+                }else{
                     $response->data = [
-                        'message' => $message,
-                        'code' => $response->isSuccessful ? $response->data['code'] ?? Code::getSuccessCode() : Code::getErrorCode(),
-                        'data' => $response->data ?: [],
+                        'message' => '服务器异常',
+                        'code' => 500,
+                        'data' => 0,
                         'duration' => Common::getMillisecond() - $this->start
                     ];
-                }else{
-                    $response->data['duration'] = Common::getMillisecond() - $this->start;
                 }
-                $response->statusCode = 200;
             }
         );
         return $action;

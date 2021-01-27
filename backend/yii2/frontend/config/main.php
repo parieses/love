@@ -1,6 +1,7 @@
 <?php
 
 use frontend\models\User;
+use yii\web\JsonParser;
 
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
@@ -16,11 +17,10 @@ return [
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
-            'csrfParam' => '_csrf-frontend',
             'enableCookieValidation' => false,
             'parsers' => [
-                'application/json' => JsonParser::class,
-                'text/json' => JsonParser::class,
+                'application/json' => 'yii\web\JsonParser',
+                'text/json' => 'yii\web\JsonParser',
             ]
         ],
         'user' => [
