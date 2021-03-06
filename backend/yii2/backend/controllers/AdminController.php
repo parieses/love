@@ -14,19 +14,6 @@ use yii\rest\ViewAction;
 
 class AdminController extends BaseController
 {
-//    public function actions()
-//    {
-//        $this->id = \Yii::$app->user->identity->id;
-//        $actions = [
-//            'view' => [
-//                'class' => MyViewAction::class,
-//                'modelClass' => $this->modelClass,
-//                'checkAccess' => [$this, 'checkAccess'],
-//                'id' =>  $this->id
-//            ],
-//        ];
-//        return $actions;
-//    }
     public function actionInfo()
     {
         return Admin::find()->where(['id' => $this->id])->select('username,head_portrait')->getArrayOne();

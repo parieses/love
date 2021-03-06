@@ -18,10 +18,15 @@ class SiteController extends Controller
         $model = new LoginForm();
         $model->load(Tool::getRequestData(), '');
         if ($model->validate()) {
-            return Tool::success('登陆成功',$model->getAccessToken());
+            return Tool::success('登陆成功', $model->getAccessToken());
         }
         $msg = Tool::getFirstErrorMessage($model->firstErrors);
         return Tool::notice($msg);
+    }
+
+    public function actionIndex(): string
+    {
+        return 'api';
     }
 
     public function actionError(): array
