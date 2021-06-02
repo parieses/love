@@ -3,12 +3,22 @@
 namespace frontend\controllers;
 
 use common\base\BaseController;
-use common\tools\Tool;
-use common\traits\BaseAction;
+use common\tools\Common;
+use frontend\models\User;
+use Yii;
 
 
 class UserController extends BaseController
 {
+
+    public $modelClass = User::class;
+
+    public function actionInvitation()
+    {
+        $invitationCode = Common::random(8);
+        Yii::$app->redis->set($invitationCode,$this->id);
+        return $invitationCode;
+    }
 
 
 }

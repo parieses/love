@@ -16,6 +16,7 @@ class SiteController extends Controller
     public function actionLogin(): array
     {
         $model = new LoginForm();
+        $model->setScenario('admin');
         $model->load(Tool::getRequestData(), '');
         if ($model->validate()) {
             return Tool::success('登陆成功', $model->getAccessToken());

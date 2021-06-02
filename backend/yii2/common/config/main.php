@@ -9,6 +9,7 @@ return [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@bower' => '@vendor/yidas/yii2-bower-asset/bower'
     ],
     'vendorPath' => dirname(__DIR__, 2) . '/vendor',
     'bootstrap' => [

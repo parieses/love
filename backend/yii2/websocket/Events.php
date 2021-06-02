@@ -7,29 +7,67 @@ namespace websocket;
  * 主要是处理 onMessage onClose
  */
 
+use backend\models\Admin;
+use common\tools\Code;
 use common\tools\Tool;
+use frontend\models\User;
 use \GatewayWorker\Lib\Gateway;
+use Yii;
 
 class Events
 {
     public static function onWebSocketConnect($client_id, $data)
     {
-        if (!isset($data['server']['HTTP_TOKEN'])) {
-            Gateway::closeClient($client_id);
+        $modelClass = User::class;
+        $groups = 'USER';
+        $token = $data['server']['HTTP_TOKEN'];
+        $app_id = $data['server']['HTTP_APP_ID'];
+        $new_message = ['type' => 'auth', 'client_id' => $client_id, 'time' => date('Y-m-d H:i:s')];
+        if (!$token) {
+            $new_message['message'] = '请检查token';
+            self::off($client_id,$new_message);
+            return;
         }
+        $token = base64_decode($token);
+        $tokenArray = explode(':&:', $token);
+        if ($tokenArray[1] < time()) {
+            $new_message['message'] = 'token过期';
+            self::off($client_id,$new_message);
+            return;
+        }
+        if ($app_id === 'love-backend') {
+            $modelClass = Admin::class;
+            $groups = 'ADMIN';
+        }
+        $redisKey = $app_id === 'love-backend' ? "ADMIN:LOGIN:" . $tokenArray[2] : "USER:LOGIN:" . $tokenArray[2];
+        $info = Yii::$app->redis->get($redisKey);
+        if (!$info) {
+            $new_message['message'] = 'token异常';
+            self::off($client_id,$new_message);
+            return;
+        }
+
+        $info = $modelClass::findIdentity($tokenArray[2]);
+        if ((int)$info->status !== 1) {
+            $new_message['message'] = '账号异常';
+            self::off($client_id,$new_message);
+            return;
+        }
+        Yii::$app->redis->sadd($groups, $client_id);
+        Yii::$app->redis->set($client_id, $info->id);
     }
+
     /**
      * 有消息时
      *
      * @param int   $client_id
      * @param mixed $message
+     * @param       $data
      * @return bool|void
-     * @throws \Exception
      */
 
     public static function onMessage($client_id, $message)
     {
-
         // debug
 //        echo "client:{$_SERVER['REMOTE_ADDR']}:{$_SERVER['REMOTE_PORT']} gateway:{$_SERVER['GATEWAY_ADDR']}:{$_SERVER['GATEWAY_PORT']}  client_id:$client_id session:" . json_encode($_SESSION) . " onMessage:" . $message . "\n";
 //
@@ -126,5 +164,9 @@ class Events
 //            $new_message = array('type' => 'logout', 'from_client_id' => $client_id, 'from_client_name' => $_SESSION['client_name'], 'time' => date('Y-m-d H:i:s'));
 //            Gateway::sendToGroup($room_id, json_encode($new_message));
 //        }
+    }
+    public static function off($client_id,$new_message){
+        Gateway::sendToCurrentClient(json_encode($new_message));
+        Gateway::closeClient($client_id);
     }
 }
