@@ -14,8 +14,8 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-
-    if (store.getters.token) {
+    config.headers['source'] = 'PC'
+    if (getToken()) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
@@ -44,7 +44,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    console.log(res);
+    console.log(res)
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 1) {
@@ -58,13 +58,14 @@ service.interceptors.response.use(
       if (res.code === 5) {
         // to re-login
         MessageBox.confirm('您已经登出，您可以取消留在此页面，或重新登录', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
+          confirmButtonText: '重新登陆',
+          cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
+          location.reload() // 为了重新实例化vue-router对象 避免bug
+          // store.dispatch('admin/resetToken').then(() => {
+          //   location.reload()
+          // })
         })
       }
       return Promise.reject(new Error(res.message || 'Error'))

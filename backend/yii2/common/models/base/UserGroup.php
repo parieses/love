@@ -10,11 +10,11 @@ use Yii;
  * @property int $id
  * @property int $originator_id 发起人
  * @property int $join_id 加入人
- * @property string $head_portrait 头像
- * @property string $background_image 头像
+ * @property int $head_portrait 头像图片库id
+ * @property int $background_image 背景 图片库id
  * @property string $nickname 昵称
  * @property string $address 默认地址
- * @property string $describe 菜单描述
+ * @property string $describe 描述
  * @property int $created_at 创建时间
  * @property int $updated_at 修改时间
  * @property int $status 状态[-1:解散;0:正常]
@@ -35,9 +35,7 @@ class UserGroup extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['originator_id', 'join_id', 'created_at', 'updated_at','status'], 'integer'],
-            [['head_portrait'], 'string', 'max' => 255],
-            [['background_image'], 'string', 'max' => 1000],
+            [['originator_id', 'join_id', 'head_portrait', 'background_image', 'created_at', 'updated_at','status'], 'integer'],
             [['nickname'], 'string', 'max' => 10],
             [['address', 'describe'], 'string', 'max' => 100],
         ];
@@ -50,16 +48,16 @@ class UserGroup extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'originator_id' => 'Originator ID',
-            'join_id' => 'Join ID',
-            'head_portrait' => 'Head Portrait',
-            'background_image' => 'Background Image',
-            'nickname' => 'Nickname',
-            'address' => 'Address',
-            'describe' => 'Describe',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'status' => 'Status',
+            'originator_id' => '发起人',
+            'join_id' => '加入人',
+            'head_portrait' => '头像图片库id',
+            'background_image' => '背景 图片库id',
+            'nickname' => '昵称',
+            'address' => '默认地址',
+            'describe' => '描述',
+            'created_at' => '创建时间',
+            'updated_at' => '修改时间',
+            'status' => '状态[-1:解散;0:正常]',
         ];
     }
 

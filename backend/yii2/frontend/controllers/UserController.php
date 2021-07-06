@@ -15,9 +15,7 @@ class UserController extends BaseController
 
     public function actionInvitation()
     {
-        $invitationCode = Common::random(8);
-        Yii::$app->redis->set($invitationCode,$this->id);
-        return $invitationCode;
+
     }
 
 

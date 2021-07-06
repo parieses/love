@@ -11,7 +11,7 @@ use Yii;
  * @property string $password_hash 密码
  * @property string $realname 真实姓名
  * @property string $nickname 昵称
- * @property string $head_portrait 头像
+ * @property int $head_portrait 图片库id
  * @property int $gender 性别[0:未知;1:男;2:女]
  * @property string $qq qq
  * @property string $email 邮箱
@@ -45,11 +45,10 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['head_portrait', 'province_id', 'city_id', 'area_id', 'visit_count', 'last_time', 'created_at', 'updated_at','status','gender'], 'integer'],
             [['birthday'], 'safe'],
-            [['province_id', 'city_id', 'area_id', 'visit_count', 'last_time', 'created_at', 'updated_at','gender','status'], 'integer'],
             [['password_hash'], 'string', 'max' => 150],
             [['realname', 'nickname'], 'string', 'max' => 10],
-            [['head_portrait'], 'string', 'max' => 255],
             [['qq', 'home_phone'], 'string', 'max' => 20],
             [['email'], 'string', 'max' => 60],
             [['address'], 'string', 'max' => 100],
@@ -68,7 +67,7 @@ class User extends \yii\db\ActiveRecord
             'password_hash' => '密码',
             'realname' => '真实姓名',
             'nickname' => '昵称',
-            'head_portrait' => '头像',
+            'head_portrait' => '图片库id',
             'gender' => '性别[0:未知;1:男;2:女]',
             'qq' => 'qq',
             'email' => '邮箱',

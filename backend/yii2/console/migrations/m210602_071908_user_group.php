@@ -18,19 +18,18 @@ class m210602_071908_user_group extends Migration
      */
     public function safeUp()
     {
-        $tableOptions = 'ENGINE=InnoDB';
-
+        $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB COMMENT="用户组"';
         $this->createTable(
             '{{%user_group}}',
             [
                 'id' => $this->primaryKey(11)->unsigned(),
                 'originator_id' => $this->integer(11)->null()->defaultValue(0)->comment('发起人'),
                 'join_id' => $this->integer(11)->null()->defaultValue(0)->comment('加入人'),
-                'head_portrait' => $this->string(255)->null()->defaultValue('')->comment('头像'),
-                'background_image' => $this->string(1000)->null()->defaultValue('')->comment('头像'),
+                'head_portrait' => $this->integer(11)->null()->defaultValue(0)->comment('头像图片库id'),
+                'background_image'=> $this->integer(11)->null()->defaultValue(0)->comment('背景 图片库id'),
                 'nickname' => $this->string(10)->null()->defaultValue('')->comment('昵称'),
                 'address' => $this->string(100)->null()->defaultValue('')->comment('默认地址'),
-                'describe' => $this->string(100)->notNull()->defaultValue('')->comment('菜单描述'),
+                'describe' => $this->string(100)->notNull()->defaultValue('')->comment('描述'),
                 'created_at' => $this->integer(10)->unsigned()->null()->defaultValue(0)->comment('创建时间'),
                 'updated_at' => $this->integer(10)->unsigned()->null()->defaultValue(0)->comment('修改时间'),
                 'status' => $this->tinyInteger(4)->notNull()->defaultValue(0)->comment('状态[-1:解散;0:正常]'),

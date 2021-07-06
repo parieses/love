@@ -17,7 +17,7 @@ class m210601_023722_menu extends Migration
      */
     public function safeUp()
     {
-        $tableOptions = 'ENGINE=InnoDB';
+        $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB COMMENT="菜单"';
         $this->createTable(
             '{{%menu}}',
             [

@@ -3,15 +3,8 @@
 
 namespace common\tools;
 
-use common\container\FuncContainer;
-use common\exceptions\ApiException;
-use common\models\BackendAdminQuery;
-use common\models\CustomerDepartment;
-use common\models\CustomerVenue;
-use common\models\MerchantCustomer;
-use xingfufit\lib_service\common\Upload;
 use Yii;
-use yii\base\Exception;
+
 
 class Common
 {
@@ -91,11 +84,12 @@ class Common
     {
         $timestamp = (time() + self::TOKEN_EXPIRE);
         $redisKey .= $info->id;
-        $token =  Yii::$app->security->generateRandomString() . ':&:' . $timestamp . ':&:' . $info->id;
-        Yii::$app->redis->set($redisKey,$token );
+        $token = Yii::$app->security->generateRandomString() . ':&:' . $timestamp . ':&:' . $info->id;
+        Yii::$app->redis->set($redisKey, $token);
         Yii::$app->redis->expireat($redisKey, $timestamp);
         return base64_encode($token);
     }
+
     public static function random($length, $numeric = false)
     {
         $seed = base_convert(md5(microtime() . $_SERVER['DOCUMENT_ROOT']), 16, $numeric ? 10 : 35);
@@ -114,5 +108,14 @@ class Common
         }
 
         return $hash;
+    }
+
+    public static function formatRedisHash($data, $length)
+    {
+        $arr = [];
+        for ($i = 0; $i < $length; $i++) {
+            $arr[$data[($i * 2)]] = $data[($i * 2) + 1];
+        }
+        return $arr;
     }
 }

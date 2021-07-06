@@ -18,7 +18,7 @@ class m210125_032322_user extends Migration
      */
     public function safeUp()
     {
-        $tableOptions = 'ENGINE=InnoDB';
+        $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB COMMENT="用户"';
 
         $this->createTable(
             '{{%user}}',
@@ -27,7 +27,7 @@ class m210125_032322_user extends Migration
                 'password_hash' => $this->string(150)->notNull()->defaultValue('')->comment('密码'),
                 'realname' => $this->string(10)->null()->defaultValue('')->comment('真实姓名'),
                 'nickname' => $this->string(10)->null()->defaultValue('')->comment('昵称'),
-                'head_portrait' => $this->string(255)->null()->defaultValue('')->comment('头像'),
+                'head_portrait' => $this->integer(11)->null()->defaultValue(0)->comment('图片库id'),
                 'gender' => $this->tinyInteger(3)->unsigned()->null()->defaultValue(0)->comment('性别[0:未知;1:男;2:女]'),
                 'qq' => $this->string(20)->null()->defaultValue('')->comment('qq'),
                 'email' => $this->string(60)->null()->defaultValue('')->comment('邮箱'),

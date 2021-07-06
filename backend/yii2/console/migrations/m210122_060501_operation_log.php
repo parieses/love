@@ -14,7 +14,8 @@ class m210122_060501_operation_log extends Migration
 
     public function safeUp()
     {
-        $tableOptions = 'ENGINE=InnoDB';
+        $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB COMMENT="操作日志"';
+
 
         $this->createTable(
             '{{%operation_log}}',

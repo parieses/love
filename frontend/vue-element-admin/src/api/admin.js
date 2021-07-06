@@ -11,7 +11,7 @@ export function login(data) {
 export function getInfo() {
   return request({
     url: '/admin/info',
-    method: 'get',
+    method: 'get'
   })
 }
 
@@ -21,3 +21,4 @@ export function logout() {
     method: 'post'
   })
 }
+

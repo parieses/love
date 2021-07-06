@@ -2,17 +2,20 @@
 
 namespace frontend\controllers;
 
-use common\models\UserGroup;
+use common\models\Gallery;
 use common\tools\Code;
+use common\tools\Common;
 use Exception;
 use frontend\models\RegisterForm;
-use frontend\models\User;
 use common\models\form\LoginForm;
 use common\tools\Tool;
 use common\traits\BaseAction;
 use Yii;
 use yii\base\UserException;
+use yii\helpers\FileHelper;
 use yii\web\Controller;
+use yii\web\Response;
+use yii\web\UploadedFile;
 
 
 /**
@@ -25,16 +28,35 @@ class SiteController extends Controller
     public $defaultAction = 'synopsis';
 
     /**
-     * 登陆
-     * Created by Mr.亮先生.
-     * program: love
-     * FuncName:actionLogin
-     * status:
-     * User: Mr.liang
-     * Date: 2021/1/25
-     * Time: 15:04
-     * Email:1695699447@qq.com
-     * @return array
+     * @api            {post} /site/login
+     * @apiDescription 登陆获取用户token
+     * @apiGroup       用户
+     * @apiName        登陆
+     * @apiHeader {String} source = APP 请求头必须携带来源字段
+     * @apiParam {Number} mobile 手机号
+     * @apiParam {String} password 密码
+     * @apiVersion     0.1.0
+     * @apiExample {curl} 访问示例：
+     * curl -i http://127.0.0.1:8888/site/login
+     * @apiError {String} message 错误信息
+     * @apiError {Number} code 0 报错 2 提醒
+     * @apiErrorExample  {json} error-example
+     * {
+     * "code": 2,
+     * "message": "请填写手机号",
+     * "data": null,
+     * "duration": 78
+     * }
+     * @apiSuccess {Number} code 1 成功
+     * @apiSuccess {String} message 提示语
+     * @apiSuccess {String} data 登陆成功的token
+     * @apiSuccessExample  {json} success-example
+     * {
+     * "code": 1,
+     * "message": "登陆成功",
+     * "data": "VE1lTk05NnpLZktwRDdURGpOWVZNSzNnQ3gxZElWcjc6JjoxNjI2Mzk4NjM3OiY6MQ==",
+     * "duration": 742
+     * }
      */
     public function actionLogin(): array
     {
@@ -49,16 +71,36 @@ class SiteController extends Controller
     }
 
     /**
-     * 注册
-     * Created by Mr.亮先生.
-     * program: love
-     * FuncName:actionRegister
-     * status:
-     * User: Mr.liang
-     * Date: 2021/1/25
-     * Time: 15:04
-     * Email:1695699447@qq.com
-     * @return array
+     * @api            {post} /site/register
+     * @apiDescription 用户注册
+     * @apiGroup       用户
+     * @apiName        注册
+     * @apiHeader {String} source = APP 请求头必须携带来源字段
+     * @apiParam {Number} mobile 手机号
+     * @apiParam {String} password 密码
+     * @apiParam {Number} gender 性别:1男2女
+     * @apiVersion     0.1.0
+     * @apiExample {curl} 访问示例：
+     * curl -i http://127.0.0.1:8888/site/register
+     * @apiError {String} message 错误信息
+     * @apiError {Number} code 0 报错 2 提醒
+     * @apiErrorExample  {json} error-example
+     * {
+     * "code": 2,
+     * "message": "请填写手机号",
+     * "data": null,
+     * "duration": 78
+     * }
+     * @apiSuccess {Number} code  1 成功
+     * @apiSuccess {String} message 提示语
+     * @apiSuccess {String} data 注册成功返回的的token
+     * @apiSuccessExample  {json} success-example
+     * {
+     * "code": 1,
+     * "message": "注册成功",
+     * "data": "aUNJMjhZOUdQdHZOSFJ2S3FBWlFWMnlKN2p2QU9rS0s6JjoxNjI2Mzk5NzI3OiY6Mw==",
+     * "duration": 697
+     * }
      */
     public function actionRegister()
     {
@@ -75,33 +117,9 @@ class SiteController extends Controller
                 $msg = Tool::getFirstErrorMessage($model->firstErrors);
                 throw new UserException($msg);
             }
-            $msg = '';
-            //判断是否有邀请码
-            if (isset($data['code']) && $id = Yii::$app->redis->get($data['code'])) {
-                $originator = User::findOne(['id' => $id, 'status' => [0, 1]]);
-                if (!$originator) {
-                    $msg = ',该邀请人不存在';
-                } else {
-                    if ($originator->gender == $data['gender']) {
-                        $msg = ',不能和同性别组队';
-                    } else {
-                        $groupModel = UserGroup::findOne(['originator_id' => $id, 'status' => 0, 'join_id' => 0]);
-                        if ($groupModel) {
-                            $groupModel->join_id = $model->id;
-                            if (!$groupModel->save()) {
-                                $msg = Tool::getFirstErrorMessage($groupModel->firstErrors);
-                                throw new UserException($msg);
-                            } else {
-                                $msg = ',并组队成功';
-                            }
-                        } else {
-                            $msg = ',该邀请链接不存在或已组队成功';
-                        }
-                    }
-                }
-            }
+            $access_token = Common::generateAccessToken($model, "USER:LOGIN:" . $model->id);
             $transaction->commit();
-            return Tool::success('注册成功' . $msg);
+            return Tool::success('注册成功', $access_token);
         } catch (Exception $e) {
             $transaction->rollBack();
             return Tool::notice($e->getMessage());
@@ -116,5 +134,77 @@ class SiteController extends Controller
     public function actionSynopsis()
     {
         return 'API';
+    }
+
+    /**
+     * @api            {post} /site/upload-image
+     * @apiDescription 上传图片
+     * @apiGroup       公共
+     * @apiName        上传图片
+     * @apiHeader {String} source = APP 请求头必须携带来源字段
+     * @apiParam {File} image 图片
+     * @apiVersion     0.1.0
+     * @apiExample {curl} 访问示例：
+     * curl -i http://127.0.0.1:8888/site/upload-image
+     * @apiError {String} message 错误信息
+     * @apiError {Number} code 0 报错 2 提醒
+     * @apiErrorExample  {json} error-example
+     * {
+     * "code": 2,
+     * "message": "请填写手机号",
+     * "data": null,
+     * "duration": 78
+     * }
+     * @apiSuccess {Number} code  =1 成功
+     * @apiSuccess {String} message 提示语
+     * @apiSuccess {String} data 上传成功的id
+     * @apiSuccessExample  {json} success-example
+     * {
+     * "code": 1,
+     * "message": "上传成功",
+     * "data": 2,
+     * "duration": 269
+     * }
+     */
+    public function actionUploadImage()
+    {
+        $file = UploadedFile::getInstanceByName('image');
+        $path = Yii::getAlias('@upload') . '/' . date('y-m-d') . '/';
+        FileHelper::createDirectory($path);
+        $filePath = $path . time() . $file->name;
+        $file->saveAs($filePath);
+        $file_md5 = md5_file($filePath);
+        $gallery = Gallery::findOne(['md5' => $file_md5]);
+        if ($gallery) {
+            FileHelper::unlink($filePath);
+            return Tool::success('已存在', $gallery->id);
+        }
+        $create = Gallery::create($file_md5, $filePath);
+        if (is_numeric($create)) {
+            return Tool::success('上传成功', $create);
+        }
+        FileHelper::unlink($filePath);
+        return Tool::error($create);
+    }
+
+    /**
+     * @api            {post} /site/image
+     * @apiDescription 查看图片
+     * @apiGroup       公共
+     * @apiName        查看图片
+     * @apiParam {Number} id 上传图片的id
+     * @apiVersion     0.1.0
+     * @apiExample {curl} 访问示例：
+     * curl -i http://127.0.0.1:8888/site/image
+     */
+    public function actionImage()
+    {
+        $id = Tool::getRequestData('id');
+        $response = Yii::$app->getResponse();
+        $response->headers->set('Content-Type', 'image/jpeg');
+        $response->format = Response::FORMAT_RAW;
+        $imgFullPath = Gallery::findOne($id)->url;
+        $response->stream = fopen($imgFullPath, 'r');
+        return $response->send();
     }
 }

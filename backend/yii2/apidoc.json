@@ -1,0 +1,14 @@
+{
+  "name": "Love",
+  "title": "LoveAPI",
+  "description":"LoveAPI接口文档",
+  "url" : "http://127.0.0.1:8888/",
+  "version": "0.1.0",
+  "header": {
+    "title": "文档说明"
+  },
+  "footer": {
+    "title": "文档结尾"
+  }
+}
+

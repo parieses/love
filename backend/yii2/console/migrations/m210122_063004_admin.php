@@ -15,8 +15,7 @@ class m210122_063004_admin extends Migration
 
     public function safeUp()
     {
-        $tableOptions = 'ENGINE=InnoDB';
-
+        $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB COMMENT="管理员"';
         $this->createTable(
             '{{%admin}}',
             [
@@ -27,7 +26,7 @@ class m210122_063004_admin extends Migration
                 'password_reset_token' => $this->string(150)->null()->defaultValue('')->comment('密码重置令牌'),
                 'type' => $this->tinyInteger(1)->null()->defaultValue(1)->comment('1:普通管理员;10超级管理员'),
                 'realname' => $this->string(10)->null()->defaultValue('')->comment('真实姓名'),
-                'head_portrait' => $this->string(255)->null()->defaultValue('')->comment('头像'),
+                'head_portrait' => $this->integer(11)->null()->defaultValue(0)->comment('图片库id'),
                 'gender' => $this->tinyInteger(3)->unsigned()->null()->defaultValue(0)->comment('性别[0:未知;1:男;2:女]'),
                 'qq' => $this->string(20)->null()->defaultValue('')->comment('qq'),
                 'email' => $this->string(60)->null()->defaultValue('')->comment('邮箱'),
@@ -44,8 +43,8 @@ class m210122_063004_admin extends Migration
                 'last_ip' => $this->string(16)->null()->defaultValue('')->comment('最后一次登录ip'),
                 'role' => $this->bigInteger(20)->null()->defaultValue(0)->comment('权限'),
                 'status' => $this->tinyInteger(4)->null()->defaultValue(1)->comment('状态[-1:删除;0:禁用;1启用]'),
-                'created_at' => $this->integer(10)->unsigned()->null()->defaultValue(0)->comment('创建时间'),
-                'updated_at' => $this->integer(10)->unsigned()->null()->defaultValue(0)->comment('修改时间'),
+                'created_at' => $this->integer(11)->unsigned()->null()->defaultValue(0)->comment('创建时间'),
+                'updated_at' => $this->integer(11)->unsigned()->null()->defaultValue(0)->comment('修改时间'),
             ],
             $tableOptions
         );

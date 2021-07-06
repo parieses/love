@@ -14,7 +14,7 @@ use Yii;
  * @property string $password_reset_token 密码重置令牌
  * @property int $type 1:普通管理员;10超级管理员
  * @property string $realname 真实姓名
- * @property string $head_portrait 头像
+ * @property int $head_portrait 图片库id
  * @property int $gender 性别[0:未知;1:男;2:女]
  * @property string $qq qq
  * @property string $email 邮箱
@@ -50,17 +50,19 @@ class Admin extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['head_portrait', 'province_id', 'city_id', 'area_id', 'visit_count', 'last_time', 'role', 'created_at', 'updated_at'], 'integer'],
             [['birthday'], 'safe'],
-            [['province_id', 'city_id', 'area_id', 'visit_count', 'last_time', 'role', 'created_at', 'updated_at','type','gender','status'], 'integer'],
             [['username', 'qq', 'home_phone'], 'string', 'max' => 20],
             [['password_hash', 'password_reset_token'], 'string', 'max' => 150],
             [['auth_key'], 'string', 'max' => 32],
+            [['type'], 'string', 'max' => 1],
             [['realname'], 'string', 'max' => 10],
-            [['head_portrait'], 'string', 'max' => 255],
+            [['gender'], 'string', 'max' => 3],
             [['email'], 'string', 'max' => 60],
             [['address', 'dingtalk_robot_token'], 'string', 'max' => 100],
             [['mobile'], 'string', 'max' => 11],
             [['last_ip'], 'string', 'max' => 16],
+            [['status'], 'string', 'max' => 4],
         ];
     }
 
@@ -77,7 +79,7 @@ class Admin extends \yii\db\ActiveRecord
             'password_reset_token' => '密码重置令牌',
             'type' => '1:普通管理员;10超级管理员',
             'realname' => '真实姓名',
-            'head_portrait' => '头像',
+            'head_portrait' => '图片库id',
             'gender' => '性别[0:未知;1:男;2:女]',
             'qq' => 'qq',
             'email' => '邮箱',

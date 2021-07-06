@@ -9,6 +9,7 @@ use common\tools\Code;
 use common\tools\Common;
 use common\tools\Tool;
 use common\traits\BaseAction;
+use frontend\models\User;
 use Yii;
 use yii\rest\ActiveController;
 use yii\rest\Serializer;
@@ -78,7 +79,7 @@ class BaseController extends ActiveController
             $modelClass = Admin::class;
         } else {
             $redisKey = "USER:LOGIN:" . $tokenArray[2];
-            $modelClass = Admin::class;
+            $modelClass = User::class;
         }
         $info = Yii::$app->redis->get($redisKey);
         if (!$info) {
